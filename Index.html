@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#6c4ce4">
+<title>Fun Math Worlds</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f0edff;color:#292044;text-align:center}
+header{background:linear-gradient(120deg,#7049e8,#a66cf5);color:white;padding:25px 12px;border-radius:0 0 25px 25px}
+h1{margin:5px;font-size:30px}
+main{max-width:480px;margin:auto;padding:18px}
+.card{background:white;padding:20px;border-radius:20px;margin:15px 0;box-shadow:0 4px 14px #ddd}
+button,select{padding:13px;border:0;border-radius:12px;font-size:17px;margin:6px;cursor:pointer}
+button{background:#7049e8;color:white}
+button:active{transform:scale(.97)}
+select{background:#eee}
+.menu button{width:43%;min-height:65px}
+#question{font-size:27px;font-weight:bold;margin:20px}
+.answer{width:42%;background:#eee;color:#292044;font-weight:bold}
+#message{font-size:20px;font-weight:bold;min-height:30px}
+</style>
+</head>
+<body>
+<header>
+<h1>🌍 Fun Math Worlds</h1>
+<p>Learn Math • Play • Win Stars ⭐</p>
+</header>
+<main>
+<div class="card">
+<h2>Welcome, Little Champion! 🎉</h2>
+<p>Choose your language</p>
+<select id="language" onchange="changeLanguage()">
+<option value="en">English</option>
+<option value="hi">हिंदी</option>
+</select>
+<p>Choose your age</p>
+<select id="age">
+<option value="5">5 Years</option>
+<option value="6">6 Years</option>
+<option value="7">7 Years</option>
+<option value="8">8 Years</option>
+</select>
+</div>
+<div class="card menu">
+<h2 id="choose">Choose Your Game</h2>
+<button onclick="startGame('add')">➕ Addition</button>
+<button onclick="startGame('sub')">➖ Subtraction</button>
+<button onclick="startGame('mul')">✖️ Multiply</button>
+<button onclick="startGame('div')">➗ Division</button>
+</div>
+<div class="card" id="game" style="display:none">
+<h2 id="gameTitle">Math Quiz</h2>
+<p id="progress"></p>
+<div id="question"></div>
+<div id="answers"></div>
+<p id="message"></p>
+<p id="score">⭐ Stars: 0</p>
+<button onclick="nextQuestion()" id="next" style="display:none">Next ➜</button>
+</div>
+</main>
+<script>
+let type='add',a=0,b=0,correct=0,stars=0,count=0,total=10;
+let lang='en';
+function changeLanguage(){
+lang=document.getElementById('language').value;
+document.getElementById('choose').textContent=lang==='hi'?'अपना खेल चुनें':'Choose Your Game';
+}
+function startGame(t){
+type=t;stars=0;count=0;
+document.getElementById('game').style.display='block';
+nextQuestion();
+document.getElementById('game').scrollIntoView({behavior:'smooth'});
+}
+function nextQuestion(){
+if(count>=total){
+document.getElementById('question').textContent=lang==='hi'?'खेल समाप्त!':'Game Completed!';
+document.getElementById('answers').innerHTML='';
+document.getElementById('message').textContent=(lang==='hi'?'आपके सितारे: ':'Your stars: ')+stars+' ⭐';
+document.getElementById('next').style.display='none';
+return;
+}
+count++;
+let max=Number(document.getElementById('age').value)*3;
+a=Math.floor(Math.random()*(max+1))+1;
+b=Math.floor(Math.random()*(max+1))+1;
+if(type==='sub'&&b>a)[a,b]=[b,a];
+if(type==='div'){a=a*b;}
+correct=type==='add'?a+b:type==='sub'?a-b:type==='mul'?a*b:a/b;
+let symbol={add:'+',sub:'−',mul:'×',div:'÷'}[type];
+document.getElementById('progress').textContent=(lang==='hi'?'प्रश्न ':'Question ')+count+'/'+total;
+document.getElementById('question').textContent=a+' '+symbol+' '+b+' = ?';
+document.getElementById('message').textContent='';
+document.getElementById('next').style.display='none';
+let options=[correct,correct+1,Math.max(0,correct-1),correct+2];
+options=[...new Set(options)];
+while(options.length<4)options.push(correct+options.length+2);
+options.sort(()=>Math.random()-.5);
+document.getElementById('answers').innerHTML=options.map(n=>'<button class="answer" onclick="checkAnswer('+n+')">'+n+'</button>').join('');
+}
+function checkAnswer(n){
+if(document.getElementById('next').style.display==='inline-block')return;
+if(n===correct){
+stars++;
+document.getElementById('message').textContent=lang==='hi'?'शाबाश! सही जवाब! 🎉':'Excellent! Correct Answer! 🎉';
+}else{
+document.getElementById('message').textContent=lang==='hi'?'कोशिश अच्छी थी! सही जवाब: ':'Good try! Correct answer: ' +correct;
+}
+document.getElementById('score').textContent=(lang==='hi'?'सितारे: ':'⭐ Stars: ')+stars;
+document.querySelectorAll('.answer').forEach(btn=>btn.disabled=true);
+document.getElementById('next').style.display='inline-block';
+}
+</script>
+</body>
+</html>
